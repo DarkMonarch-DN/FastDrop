@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -37,13 +37,15 @@ class Order(Base):
     to_lon: Mapped[float]
 
     client_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    client: Mapped["User"] = relationship(
-        "ClientOrders", back_populates="client_orders"
+    courier_id: Mapped[Optional[int]] = mapped_column(  # noqa: UP045
+        ForeignKey("users.id"), nullable=True
     )
 
-    courier_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    courier: Mapped["User"] = relationship(
-        "CourierOrders", back_populates="courier_orders"
+    client: Mapped["User"] = relationship(
+        "User", back_populates="client_orders", foreign_keys=[client_id]
+    )
+    courier: Mapped[Optional["User"]] = relationship(
+        "User", back_populates="courier_orders", foreign_keys=[courier_id]
     )
 
     created_at: Mapped[datetime] = mapped_column(default=func.now())

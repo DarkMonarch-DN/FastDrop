@@ -29,10 +29,10 @@ class User(Base):
     role: Mapped[UserRole] = mapped_column(default=UserRole.client)
 
     client_orders: Mapped[list["Order"]] = relationship(
-        "ClientOrders", back_populates="client"
+        "Order", back_populates="client", foreign_keys="[Order.client_id]"
     )
     courier_orders: Mapped[list["Order"]] = relationship(
-        "CourierOrders", back_populates="courier"
+        "Order", back_populates="courier", foreign_keys="[Order.courier_id]"
     )
 
     created_at: Mapped[datetime] = mapped_column(default=func.now())
